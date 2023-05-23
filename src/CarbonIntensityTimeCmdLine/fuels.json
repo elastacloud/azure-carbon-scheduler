@@ -1,0 +1,103 @@
+[
+
+   {
+      "Code": "B01",
+      "Type": "biomass",
+      "Info": ""
+   },
+   {
+      "Code": "B02",
+      "Type": "coal",
+      "Info": ""
+   },
+   {
+      "Code": "B03",
+      "Type": "fossil",
+      "Info": "Coal derived gas"
+   },
+   {
+      "Code": "B04",
+      "Type": "natgas",
+      "Info": ""
+   },
+   {
+      "Code": "B05",
+      "Type": "coal",
+      "Info": "anthracite"
+   },
+   {
+      "Code": "B06",
+      "Type": "oil",
+      "Info": ""
+   },
+   {
+      "Code": "B07",
+      "Type": "oil",
+      "Info": "Shale oil"
+   },
+   {
+      "Code": "B08",
+      "Type": "fossil",
+      "Info": "peat"
+   },
+   {
+      "Code": "B09",
+      "Type": "geo",
+      "Info": ""
+   },
+   {
+      "Code": "B10",
+      "Type": "hydro",
+      "Info": "Pumped storage"
+   },
+   {
+      "Code": "B11",
+      "Type": "hydro",
+      "Info": "Run of river"
+   },
+   {
+      "Code": "B12",
+      "Type": "hydro",
+      "Info": "reservoir"
+   },
+   {
+      "Code": "B13",
+      "Type": "renewable",
+      "Info": "marine"
+   },
+   {
+      "Code": "B14",
+      "Type": "nuclear",
+      "Info": ""
+   },
+   {
+      "Code": "B15",
+      "Type": "renewable",
+      "Info": "Other renewable"
+   },
+   {
+      "Code": "B16",
+      "Type": "solar",
+      "Info": ""
+   },
+   {
+      "Code": "B17",
+      "Type": "refuse",
+      "Info": ""
+   },
+   {
+      "Code": "B18",
+      "Type": "wind",
+      "Info": "Offshore"
+   },
+   {
+      "Code": "B19",
+      "Type": "wind",
+      "Info": "Onshore"
+   },
+   {
+      "Code": "B20",
+      "Type": "other",
+      "Info": ""
+   }
+]
