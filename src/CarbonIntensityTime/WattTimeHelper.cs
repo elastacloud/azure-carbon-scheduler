@@ -25,56 +25,72 @@ using System.Text.Json;
 
 namespace CarbonIntensityTime
 {
-   public class WattTimeHelper : IEuropeanLoadHelper
+   public class EuropeanLoadHelper : IEuropeanLoadHelper
    {
       private readonly string _token;
-      private readonly string _countryCode;
-      private DateTime _startTime = DateTime.UtcNow;
-      private int _secondsPassed = 0;
 
       public const string ENTSOE_Endpoint = "https://web-api.tp.entsoe.eu/api";
 
-      public WattTimeHelper(string securityToken, string countryCode)
+      public EuropeanLoadHelper(string securityToken)
       {
          _token = securityToken;
-         _countryCode = countryCode;
       }
       /// <summary>
       /// Gets the previous 24 hours of values 
       /// </summary>
-      public async Task<float> GetCurrentValue(string country)
+      public async Task<string> GetCurrentValue(string psr, string inDomain)
       {
+         string? responseData = null;
          using (HttpClient client = new HttpClient())
          {
             client.BaseAddress = new Uri(ENTSOE_Endpoint);
             // Construct the query string parameters
-            var queryString = $"?securityToken={_token}";
-            // Send GET request
-            HttpResponseMessage response = await client.GetAsync("endpoint" + queryString);
-            string responseData = await response.Content.ReadAsStringAsync();
+            string periodStart = DateTime.UtcNow.AddDays(-1).ToString("yyyyMMddHH00");
+            string periodEnd = DateTime.UtcNow.ToString("yyyyMMddHH00");
+            var queryString = $"?securityToken={_token}&processType=A16&psrType={psr}&documentType=A73&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
+            HttpResponseMessage response = await client.GetAsync(queryString);
+            responseData = await response.Content.ReadAsStringAsync();
          }
-         return 1f;
+         return responseData;
       }
       /// <summary>
       /// Gets the leading forecast of values
       /// </summary>
-      public async Task<float> GetForecastValue(string country)
+      public async Task<string> GetForecastValue(string psr, string inDomain)
       {
+         string? responseData = null;
          using (HttpClient client = new HttpClient())
          {
             client.BaseAddress = new Uri(ENTSOE_Endpoint);
             // Construct the query string parameters
-            var queryString = $"?securityToken={_token}";
-            // Send GET request
-            HttpResponseMessage response = await client.GetAsync("endpoint" + queryString);
-            string responseData = await response.Content.ReadAsStringAsync();
+            string periodStart = DateTime.UtcNow.ToString("yyyyMMddHH00");
+            string periodEnd = DateTime.UtcNow.AddDays(1).ToString("yyyyMMddHH00");
+            var queryString = $"?securityToken={_token}&processType=A71&psrType={psr}&documentType=A73&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
+            HttpResponseMessage response = await client.GetAsync(queryString);
+            responseData = await response.Content.ReadAsStringAsync();
          }
-         return 1f;
+         return responseData;
       }
 
       public Task<List<EntsoeCodes>> GetEnsoeFromJsonFile(string fileName)
       {
          throw new NotImplementedException();
+      }
+
+      public async Task<string> GetInstalledCapacityByCountry(string inDomain)
+      {
+         string? responseData = null;
+         using (HttpClient client = new HttpClient())
+         {
+            client.BaseAddress = new Uri(ENTSOE_Endpoint);
+            // Construct the query string parameters
+            string periodStart = DateTime.UtcNow.AddYears(-5).ToString("yyyyMMddHH00");
+            string periodEnd = DateTime.UtcNow.AddYears(-4).ToString("yyyyMMddHH00");
+            var queryString = $"?securityToken={_token}&processType=A33&documentType=A71&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
+            HttpResponseMessage response = await client.GetAsync(queryString);
+            responseData = await response.Content.ReadAsStringAsync();
+         }
+         return responseData;
       }
    }
 }

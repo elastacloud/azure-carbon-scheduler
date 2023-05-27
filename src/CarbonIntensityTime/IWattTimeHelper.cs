@@ -5,8 +5,15 @@
    /// </summary>
    public interface IEuropeanLoadHelper
    {
-      public Task<float> GetCurrentValue(string country);
-      public Task<float> GetForecastValue(string country);
+      /// <summary>
+      /// Gets the previous 24 hour of values for the psr for a particular country
+      /// </summary>
+      public Task<string> GetCurrentValue(string psr, string inDomain);
+      public Task<string> GetForecastValue(string psr, string inDomain);
       public Task<List<EntsoeCodes>> GetEnsoeFromJsonFile(string fileName);
+      /// <summary>
+      /// GEts the installed capacity of each generator type per country
+      /// </summary>
+      public Task<string> GetInstalledCapacityByCountry(string inDomain);
    }
 }

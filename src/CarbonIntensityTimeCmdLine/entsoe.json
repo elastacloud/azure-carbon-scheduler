@@ -1,338 +1,338 @@
 [
    {
-      "country": "Albania",
+      "Country": "Albania",
       "Code": "CTA|AL",
-      "ENTSOe_ID": "10YAL-KESH-----5",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YAL-KESH-----5",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Austria",
+      "Country": "Austria",
       "Code": "CTA|AT",
-      "ENTSOe_ID": "10YAT-APG------L",
-      "gen_freq": "15m",
-      "gen_market": "RTPD"
+      "EntsoeId": "10YAT-APG------L",
+      "GenFrequency": "15m",
+      "GenMarket": "RTPD"
    },
    {
-      "country": "Belarus",
+      "Country": "Belarus",
       "Code": "CTA|BY",
       "ENSTOe_ID": "10Y1001A1001S51S",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Belgium",
+      "Country": "Belgium",
       "Code": "CTA|BE",
-      "ENTSOe_ID": "10YBE----------2",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YBE----------2",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Bosnia and Herz. ",
+      "Country": "Bosnia and Herz. ",
       "Code": "CTA|BA",
-      "ENTSOe_ID": "10YBA-JPCC-----D",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YBA-JPCC-----D",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Bulgaria",
+      "Country": "Bulgaria",
       "Code": "CTA|BG",
-      "ENTSOe_ID": "10YCA-BULGARIA-R",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YCA-BULGARIA-R",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Croatia",
+      "Country": "Croatia",
       "Code": "CTA|HR",
-      "ENTSOe_ID": "10YHR-HEP------M",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YHR-HEP------M",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Cyprus",
+      "Country": "Cyprus",
       "Code": "CTA|CY",
-      "ENTSOe_ID": "10YCY-1001A0003J",
-      "gen_freq": "30m",
-      "gen_market": "RT5M"
+      "EntsoeId": "10YCY-1001A0003J",
+      "GenFrequency": "30m",
+      "GenMarket": "RT5M"
    },
    {
-      "country": "Czech Republic",
+      "Country": "Czech Republic",
       "Code": "CTA|CZ",
-      "ENTSOe_ID": "10YCZ-CEPS-----N",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YCZ-CEPS-----N",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Czech Republic",
+      "Country": "Czech Republic",
       "Code": "CTA|PL-CZ",
-      "ENTSOe_ID": "10YDOM-1001A082L",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YDOM-1001A082L",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Denmark",
+      "Country": "Denmark",
       "Code": "CTA|DK",
-      "ENTSOe_ID": "10Y1001A1001A796",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10Y1001A1001A796",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Estonia",
+      "Country": "Estonia",
       "Code": "CTA|EE",
-      "ENTSOe_ID": "10Y1001A1001A39I",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10Y1001A1001A39I",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "FYR Macedonia",
+      "Country": "FYR Macedonia",
       "Code": "CTA|MK",
-      "ENTSOe_ID": "10YMK-MEPSO----8",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YMK-MEPSO----8",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Finland",
+      "Country": "Finland",
       "Code": "CTA|FI",
-      "ENTSOe_ID": "10YFI-1--------U",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YFI-1--------U",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "France",
+      "Country": "France",
       "Code": "CTA|FR",
-      "ENTSOe_ID": "10YFR-RTE------C",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YFR-RTE------C",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Germany",
+      "Country": "Germany",
       "Code": "CTA|DE(50HzT)",
-      "ENTSOe_ID": "10YDE-VE-------2",
-      "gen_freq": "15m",
-      "gen_market": "RTPD"
+      "EntsoeId": "10YDE-VE-------2",
+      "GenFrequency": "15m",
+      "GenMarket": "RTPD"
    },
    {
-      "country": "Germany",
+      "Country": "Germany",
       "Code": "CTA|DE(Amprion)",
-      "ENTSOe_ID": "10YDE-RWENET---I",
-      "gen_freq": "15m",
-      "gen_market": "RTPD"
+      "EntsoeId": "10YDE-RWENET---I",
+      "GenFrequency": "15m",
+      "GenMarket": "RTPD"
    },
    {
-      "country": "Germany",
+      "Country": "Germany",
       "Code": "CTA|DE(TenneT GER)",
-      "ENTSOe_ID": "10YDE-EON------1",
-      "gen_freq": "15m",
-      "gen_market": "RTPD"
+      "EntsoeId": "10YDE-EON------1",
+      "GenFrequency": "15m",
+      "GenMarket": "RTPD"
    },
    {
-      "country": "Germany",
+      "Country": "Germany",
       "Code": "CTA|DE(TransnetBW)",
-      "ENTSOe_ID": "10YDE-ENBW-----N",
-      "gen_freq": "15m",
-      "gen_market": "RTPD"
+      "EntsoeId": "10YDE-ENBW-----N",
+      "GenFrequency": "15m",
+      "GenMarket": "RTPD"
    },
    {
-      "country": "Greece",
+      "Country": "Greece",
       "Code": "CTA|GR",
-      "ENTSOe_ID": "10YGR-HTSO-----Y",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YGR-HTSO-----Y",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Hungary",
+      "Country": "Hungary",
       "Code": "CTA|HU",
-      "ENTSOe_ID": "10YHU-MAVIR----U",
-      "gen_freq": "15m",
-      "gen_market": "RTPD"
+      "EntsoeId": "10YHU-MAVIR----U",
+      "GenFrequency": "15m",
+      "GenMarket": "RTPD"
    },
    {
-      "country": "Ireland",
+      "Country": "Ireland",
       "Code": "CTA|IE",
-      "ENTSOe_ID": "10YIE-1001A00010",
-      "gen_freq": "30m",
-      "gen_market": "RT5M"
+      "EntsoeId": "10YIE-1001A00010",
+      "GenFrequency": "30m",
+      "GenMarket": "RT5M"
    },
    {
-      "country": "Italy",
+      "Country": "Italy",
       "Code": "CTA|IT",
-      "ENTSOe_ID": "10YIT-GRTN-----B",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YIT-GRTN-----B",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Latvia",
+      "Country": "Latvia",
       "Code": "CTA|LV",
-      "ENTSOe_ID": "10YLV-1001A00074",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YLV-1001A00074",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Lithuania",
+      "Country": "Lithuania",
       "Code": "CTA|LT",
-      "ENTSOe_ID": "10YLT-1001A0008Q",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YLT-1001A0008Q",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Luxembourg",
+      "Country": "Luxembourg",
       "Code": "CTA|LU",
-      "ENTSOe_ID": "10YLU-CEGEDEL-NQ",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YLU-CEGEDEL-NQ",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Malta",
+      "Country": "Malta",
       "Code": "CTA|MT",
-      "ENTSOe_ID": "10Y1001A1001A93C",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10Y1001A1001A93C",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Moldavia",
+      "Country": "Moldavia",
       "Code": "CTA|MD",
-      "ENTSOe_ID": "10Y1001A1001A990",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10Y1001A1001A990",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Montenegro",
+      "Country": "Montenegro",
       "Code": "CTA|ME",
-      "ENTSOe_ID": "10YCS-CG-TSO---S",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YCS-CG-TSO---S",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Netherlands",
+      "Country": "Netherlands",
       "Code": "CTA|NL",
-      "ENTSOe_ID": "10YNL----------L",
-      "gen_freq": "15m",
-      "gen_market": "RTPD"
+      "EntsoeId": "10YNL----------L",
+      "GenFrequency": "15m",
+      "GenMarket": "RTPD"
    },
    {
-      "country": "Norway",
+      "Country": "Norway",
       "Code": "CTA|NO",
-      "ENTSOe_ID": "10YNO-0--------C",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YNO-0--------C",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Poland",
+      "Country": "Poland",
       "Code": "CTA|PL",
-      "ENTSOe_ID": "10YPL-AREA-----S",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YPL-AREA-----S",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Portugal",
+      "Country": "Portugal",
       "Code": "CTA|PT",
-      "ENTSOe_ID": "10YPT-REN------W",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YPT-REN------W",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Romania",
+      "Country": "Romania",
       "Code": "CTA|RO",
-      "ENTSOe_ID": "10YRO-TEL------P",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YRO-TEL------P",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Russia",
+      "Country": "Russia",
       "Code": "CTA|RU",
-      "ENTSOe_ID": "10YRO-TEL------P",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YRO-TEL------P",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Russia",
+      "Country": "Russia",
       "Code": "CTA|RU-KGD",
-      "ENTSOe_ID": "10Y1001A1001A50U",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10Y1001A1001A50U",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Serbia",
+      "Country": "Serbia",
       "Code": "CTA|RS",
-      "ENTSOe_ID": "10YCS-SERBIATSOV",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YCS-SERBIATSOV",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Slovakia",
+      "Country": "Slovakia",
       "Code": "CTA|SK",
-      "ENTSOe_ID": "10YSK-SEPS-----K",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YSK-SEPS-----K",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Slovenia",
+      "Country": "Slovenia",
       "Code": "CTA|SI",
-      "ENTSOe_ID": "10YSI-ELES-----O",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YSI-ELES-----O",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Spain",
+      "Country": "Spain",
       "Code": "CTA|ES",
-      "ENTSOe_ID": "10YES-REE------0",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YES-REE------0",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Sweden",
+      "Country": "Sweden",
       "Code": "CTA|SE",
-      "ENTSOe_ID": "10YSE-1--------K",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YSE-1--------K",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Switzerland",
+      "Country": "Switzerland",
       "Code": "CTA|CH",
-      "ENTSOe_ID": "10YCH-SWISSGRIDZ",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YCH-SWISSGRIDZ",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Turkey",
+      "Country": "Turkey",
       "Code": "CTA|TR",
-      "ENTSOe_ID": "10YTR-TEIAS----W",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YTR-TEIAS----W",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Ukraine",
+      "Country": "Ukraine",
       "Code": "CTA|UA",
-      "ENTSOe_ID": "10Y1001A1001A869",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10Y1001A1001A869",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Ukraine",
+      "Country": "Ukraine",
       "Code": "CTA|UA-WEPS",
-      "ENTSOe_ID": "10YUA-WEPS-----0",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10YUA-WEPS-----0",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "Ukraine",
+      "Country": "Ukraine",
       "Code": "CTA|UA-UNK",
-      "ENTSOe_ID": "10Y1001C--000182",
-      "gen_freq": "1hr",
-      "gen_market": "RTHR"
+      "EntsoeId": "10Y1001C--000182",
+      "GenFrequency": "1hr",
+      "GenMarket": "RTHR"
    },
    {
-      "country": "United Kingdom",
+      "Country": "United Kingdom",
       "Code": "CTA|NIE",
-      "ENTSOe_ID": "10Y1001A1001A016",
-      "gen_freq": "30m",
-      "gen_market": "RT5M"
+      "EntsoeId": "10Y1001A1001A016",
+      "GenFrequency": "30m",
+      "GenMarket": "RT5M"
    },
    {
-      "country": "United Kingdom",
+      "Country": "United Kingdom",
       "Code": "CTA|National Grid",
-      "ENTSOe_ID": "10YGB----------A",
-      "gen_freq": "30m",
-      "gen_market": "RT5M"
+      "EntsoeId": "10YGB----------A",
+      "GenFrequency": "30m",
+      "GenMarket": "RT5M"
    }
 ]
