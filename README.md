@@ -12,4 +12,4 @@ There is no Azure Sustainability API currently available so any big data jobs vi
 
 The intent of this solution is to be able to collect anonymous telemetry from all users to show an understand of the carbon savings that people can undertake by time shifting their data workloads where possible.
 
-[Architecture](docs/Carbon%20Intensity.png "Architecture")
+![Architecture](docs/Carbon%20Intensity.png "Architecture")
