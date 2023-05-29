@@ -1,4 +1,6 @@
-﻿namespace CarbonIntensityTime
+﻿using CarbonIntensityTypes;
+
+namespace CarbonIntensityTime
 {
    /// <summary>
    /// A helper used to get the current more value of the carbon intensity in CO2 lbs/MWh
@@ -14,6 +16,6 @@
       /// <summary>
       /// GEts the installed capacity of each generator type per country
       /// </summary>
-      public Task<string> GetInstalledCapacityByCountry(string inDomain);
+      public Task<List<CountryPsrCapacity>> GetInstalledCapacityByCountry(string inDomain);
    }
 }

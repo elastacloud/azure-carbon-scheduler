@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CarbonIntensityTime\CarbonIntensityTime.csproj" />
+    <ProjectReference Include="..\CarbonIntensityTypes\CarbonIntensityTypes.csproj" />
   </ItemGroup>
 
   <ItemGroup>

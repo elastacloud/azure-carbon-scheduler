@@ -20,13 +20,10 @@ string? fuels = await File.ReadAllTextAsync("fuels.json");
 var fuelsCodes = JsonSerializer.Deserialize<FuelCodes[]>(fuels);
 Console.WriteLine($"Reading fuels codes, there are {fuelsCodes?.Length} codes present");
 // Get a sample of the output for a particular entsoecode
-var euro = new EuropeanLoadHelper(apiKey);
+var euro = new EuropeanLoadHelper(apiKey, entsoeCodes, fuelsCodes);
 string? ukCode = entsoeCodes?.Single(country => country.Code == "CTA|National Grid").EntsoeId;
-Console.WriteLine("Gets the forecast value for each PSR");
-string fuelValues = await euro.GetForecastValue(fuelsCodes[3].Code, ukCode);
-Console.WriteLine($"Disgusting XML: {fuelValues}");
-Console.WriteLine("Gets the year ahead installed capcity for all PSRs");
-string installedCapacity = await euro.GetInstalledCapacityByCountry(ukCode);
-Console.WriteLine($"Disgusting XML: {installedCapacity}");
+Console.WriteLine("Gets the installed capacity PSRs for UK on " + DateTime.UtcNow.ToString("D"));
+var installedCapacity = await euro.GetInstalledCapacityByCountry(ukCode);
+installedCapacity.ForEach(installed => Console.WriteLine($"{installed.Psr}: {installed.Capacity} MW"));
 Console.WriteLine("PRESS ANY KEY TO END ....");
 Console.Read();

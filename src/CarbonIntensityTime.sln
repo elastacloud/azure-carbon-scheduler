@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarbonIntensityTime", "CarbonIntensityTime\CarbonIntensityTime.csproj", "{A2E9A6DE-FD32-4C9A-AC7A-02C04CF28971}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonIntensityTime", "CarbonIntensityTime\CarbonIntensityTime.csproj", "{A2E9A6DE-FD32-4C9A-AC7A-02C04CF28971}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarbonIntensityTimeCmdLine", "CarbonIntensityTimeCmdLine\CarbonIntensityTimeCmdLine.csproj", "{CDB25D5C-09DF-4905-9052-67D637FFB33F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonIntensityTimeCmdLine", "CarbonIntensityTimeCmdLine\CarbonIntensityTimeCmdLine.csproj", "{CDB25D5C-09DF-4905-9052-67D637FFB33F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarbonIntensityTypes", "CarbonIntensityTypes\CarbonIntensityTypes.csproj", "{9E79CC06-CEBB-4C8C-B693-DBD1208B928E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{CDB25D5C-09DF-4905-9052-67D637FFB33F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDB25D5C-09DF-4905-9052-67D637FFB33F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDB25D5C-09DF-4905-9052-67D637FFB33F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E79CC06-CEBB-4C8C-B693-DBD1208B928E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E79CC06-CEBB-4C8C-B693-DBD1208B928E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E79CC06-CEBB-4C8C-B693-DBD1208B928E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E79CC06-CEBB-4C8C-B693-DBD1208B928E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

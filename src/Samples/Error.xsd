@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="NewDataSet" targetNamespace="urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0" xmlns:mstns="urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0" xmlns="urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:element name="Acknowledgement_MarketDocument">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="mRID" type="xs:string" minOccurs="0" />
+        <xs:element name="createdDateTime" type="xs:string" minOccurs="0" />
+        <xs:element name="sender_MarketParticipant.marketRole.type" type="xs:string" minOccurs="0" />
+        <xs:element name="receiver_MarketParticipant.marketRole.type" type="xs:string" minOccurs="0" />
+        <xs:element name="received_MarketDocument.createdDateTime" type="xs:string" minOccurs="0" />
+        <xs:element name="sender_MarketParticipant.mRID" nillable="true" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:simpleContent msdata:ColumnName="sender_MarketParticipant.mRID_Text" msdata:Ordinal="1">
+              <xs:extension base="xs:string">
+                <xs:attribute name="codingScheme" form="unqualified" type="xs:string" />
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="receiver_MarketParticipant.mRID" nillable="true" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:simpleContent msdata:ColumnName="receiver_MarketParticipant.mRID_Text" msdata:Ordinal="1">
+              <xs:extension base="xs:string">
+                <xs:attribute name="codingScheme" form="unqualified" type="xs:string" />
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Reason" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="code" type="xs:string" minOccurs="0" />
+              <xs:element name="text" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="Acknowledgement_MarketDocument" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
