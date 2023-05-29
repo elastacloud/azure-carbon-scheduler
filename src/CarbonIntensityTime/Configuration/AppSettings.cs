@@ -1,4 +1,4 @@
-﻿namespace CarbonIntensityTimeCmdLine
+﻿namespace CarbonIntensityTime.Configuration
 {
    public class AppSettings
    {

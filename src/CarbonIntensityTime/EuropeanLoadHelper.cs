@@ -21,98 +21,118 @@
     A01 = Day ahead hourly
     A16 = Realised
 */
+
 using CarbonIntensityTypes;
-using System.Text.Json;
-using System.Xml;
-using System.Xml.Serialization;
+using CarbonIntensityTime.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace CarbonIntensityTime
 {
-   public class EuropeanLoadHelper : IEuropeanLoadHelper
-   {
-      private readonly string _token;
-      private readonly FuelCodes[] _fuelCodes;
-      private readonly EntsoeCodes[] _entsoeCodes;
-      public const string ENTSOE_Endpoint = "https://web-api.tp.entsoe.eu/api";
+    public class EuropeanLoadHelper : IEuropeanLoadHelper
+    {
+        private readonly string _token;
+        private readonly ICollection<FuelCodes>? _fuelCodes;
+        private readonly ICollection<EntsoeCodes>? _entsoeCodes;
+        private readonly IEntsoeHttpDriver _entsoeHttpDriver;
+        private readonly IHttpClientFactory _httpClientFactory;
+        public const string ENTSOE_Endpoint = "https://web-api.tp.entsoe.eu/api";
 
-      public EuropeanLoadHelper(string securityToken, EntsoeCodes[] entsoeCodes, FuelCodes[] fuelCodes)
-      {
-         _token = securityToken;
-         _fuelCodes = fuelCodes;
-         _entsoeCodes = entsoeCodes;
-      }
-      /// <summary>
-      /// Gets the previous 24 hours of values 
-      /// </summary>
-      public async Task<string> GetCurrentValue(string psr, string inDomain)
-      {
-         string? responseData = null;
-         using (HttpClient client = new HttpClient())
-         {
-            client.BaseAddress = new Uri(ENTSOE_Endpoint);
-            // Construct the query string parameters
-            string periodStart = DateTime.UtcNow.AddDays(-1).ToString("yyyyMMddHH00");
-            string periodEnd = DateTime.UtcNow.ToString("yyyyMMddHH00");
-            var queryString = $"?securityToken={_token}&processType=A16&psrType={psr}&documentType=A73&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
-            HttpResponseMessage response = await client.GetAsync(queryString);
-            responseData = await response.Content.ReadAsStringAsync();
-         }
-         return responseData;
-      }
-      /// <summary>
-      /// Gets the leading forecast of values
-      /// </summary>
-      public async Task<string> GetForecastValue(string psr, string inDomain)
-      {
-         string? responseData = null;
-         using (HttpClient client = new HttpClient())
-         {
-            client.BaseAddress = new Uri(ENTSOE_Endpoint);
-            // Construct the query string parameters
-            string periodStart = DateTime.UtcNow.ToString("yyyyMMddHH00");
-            string periodEnd = DateTime.UtcNow.AddDays(1).ToString("yyyyMMddHH00");
-            var queryString = $"?securityToken={_token}&processType=A71&psrType={psr}&documentType=A73&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
-            HttpResponseMessage response = await client.GetAsync(queryString);
-            responseData = await response.Content.ReadAsStringAsync();
-         }
-         return responseData;
-      }
+        public EuropeanLoadHelper(IEntsoeHttpDriver entsoeHttpDriver, ICodesLoader codesLoader,
+            IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory)
+        {
+            _entsoeHttpDriver = entsoeHttpDriver;
+            _httpClientFactory = httpClientFactory;
 
-      public Task<List<EntsoeCodes>> GetEnsoeFromJsonFile(string fileName)
-      {
-         throw new NotImplementedException();
-      }
+            _token = appSettings.Value.ApiKey;
+            _entsoeCodes = codesLoader.Entsoe();
+            _fuelCodes = codesLoader.Fuel();
+        }
 
-      public async Task<List<CountryPsrCapacity>> GetInstalledCapacityByCountry(string inDomain)
-      {
-         var installedCapacity = new List<CountryPsrCapacity>();
-         var entsoeRequest = new EntsoeRequest()
-         {
-            DocumentType = "A71",
-            ProcessType = "A33",
-            InDomain = inDomain,
-            SecurityToken = _token,
-            StartDate = DateTime.UtcNow.AddHours(-4),
-            EndDate = DateTime.UtcNow.AddHours(-3)
-         };
-         var request = new EntsoeHttpDriver();
-         var response = await request.EntsoeGetRequestWithPsr(entsoeRequest);
-         // Build linq expression to sum all of the installed capacities over the network for the type of generation
-         var results = from ts in response.TimeSeries
-                       group Convert.ToInt32(ts.Period[0].Point[0].quantity) by ts.MktPSRType[0].psrType into groupTimeSeries
-                       select groupTimeSeries;
-         foreach (var psr in results)
-         {
-            installedCapacity.Add(new CountryPsrCapacity()
+        public string? GetEntsoeId(string countryCode)
+        {
+            return _entsoeCodes.SingleOrDefault(c =>
+                string.Equals(c.Code, countryCode, StringComparison.OrdinalIgnoreCase))?.EntsoeId;
+        }
+
+        /// <summary>
+        /// Gets the previous 24 hours of values 
+        /// </summary>
+        public async Task<string> GetCurrentValue(string psr, string inDomain)
+        {
+            string? responseData = null;
+            using (HttpClient client = _httpClientFactory.CreateClient())
             {
-               Country = inDomain,
-               Date = entsoeRequest.StartDate,
-               Capacity = psr.Sum(),
-               Psr = _fuelCodes.Where(code => code.Code == psr.Key).Select(code => $"{code.Type} | " + (String.IsNullOrEmpty(code.Info) ? "N/A" : code.Info)).FirstOrDefault()
-            });
-         }
+                client.BaseAddress = new Uri(ENTSOE_Endpoint);
+                // Construct the query string parameters
+                string periodStart = DateTime.UtcNow.AddDays(-1).ToString("yyyyMMddHH00");
+                string periodEnd = DateTime.UtcNow.ToString("yyyyMMddHH00");
+                var queryString =
+                    $"?securityToken={_token}&processType=A16&psrType={psr}&documentType=A73&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
+                HttpResponseMessage response = await client.GetAsync(queryString);
+                responseData = await response.Content.ReadAsStringAsync();
+            }
 
-         return installedCapacity;
-      }
-   }
+            return responseData;
+        }
+
+        /// <summary>
+        /// Gets the leading forecast of values
+        /// </summary>
+        public async Task<string> GetForecastValue(string psr, string inDomain)
+        {
+            string? responseData = null;
+            using (HttpClient client = _httpClientFactory.CreateClient())
+            {
+                client.BaseAddress = new Uri(ENTSOE_Endpoint);
+                // Construct the query string parameters
+                string periodStart = DateTime.UtcNow.ToString("yyyyMMddHH00");
+                string periodEnd = DateTime.UtcNow.AddDays(1).ToString("yyyyMMddHH00");
+                var queryString =
+                    $"?securityToken={_token}&processType=A71&psrType={psr}&documentType=A73&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
+                HttpResponseMessage response = await client.GetAsync(queryString);
+                responseData = await response.Content.ReadAsStringAsync();
+            }
+
+            return responseData;
+        }
+
+        public Task<List<EntsoeCodes>> GetEnsoeFromJsonFile(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<CountryPsrCapacity>> GetInstalledCapacityByCountry(string inDomain)
+        {
+            var installedCapacity = new List<CountryPsrCapacity>();
+            var entsoeRequest = new EntsoeRequest()
+            {
+                DocumentType = "A71",
+                ProcessType = "A33",
+                InDomain = inDomain,
+                SecurityToken = _token,
+                StartDate = DateTime.UtcNow.AddHours(-4),
+                EndDate = DateTime.UtcNow.AddHours(-3)
+            };
+
+            var response = await _entsoeHttpDriver.EntsoeGetRequestWithPsr(entsoeRequest);
+            // Build linq expression to sum all of the installed capacities over the network for the type of generation
+            var results = from ts in response.TimeSeries
+                group Convert.ToInt32(ts.Period[0].Point[0].quantity) by ts.MktPSRType[0].psrType
+                into groupTimeSeries
+                select groupTimeSeries;
+            foreach (var psr in results)
+            {
+                installedCapacity.Add(new CountryPsrCapacity()
+                {
+                    Country = inDomain,
+                    Date = entsoeRequest.StartDate,
+                    Capacity = psr.Sum(),
+                    Psr = _fuelCodes.Where(code => code.Code == psr.Key).Select(code =>
+                        $"{code.Type} | " + (String.IsNullOrEmpty(code.Info) ? "N/A" : code.Info)).FirstOrDefault()
+                });
+            }
+
+            return installedCapacity;
+        }
+    }
 }
