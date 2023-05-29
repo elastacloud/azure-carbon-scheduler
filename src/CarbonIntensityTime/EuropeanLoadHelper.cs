@@ -23,9 +23,6 @@
 */
 
 using CarbonIntensityTypes;
-using System.Text.Json;
-using System.Xml;
-using System.Xml.Serialization;
 using CarbonIntensityTime.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -36,7 +33,6 @@ namespace CarbonIntensityTime
         private readonly string _token;
         private readonly ICollection<FuelCodes>? _fuelCodes;
         private readonly ICollection<EntsoeCodes>? _entsoeCodes;
-        private readonly ICodesLoader _codesLoader;
         private readonly IEntsoeHttpDriver _entsoeHttpDriver;
         private readonly IHttpClientFactory _httpClientFactory;
         public const string ENTSOE_Endpoint = "https://web-api.tp.entsoe.eu/api";
@@ -45,7 +41,6 @@ namespace CarbonIntensityTime
             IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory)
         {
             _entsoeHttpDriver = entsoeHttpDriver;
-            _codesLoader = codesLoader;
             _httpClientFactory = httpClientFactory;
 
             _token = appSettings.Value.ApiKey;
