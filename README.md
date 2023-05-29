@@ -9,3 +9,7 @@ The Carbon Intensity reads from the Entsoe database every 30 minutes and updates
 If it finds a window on a non-critical job it will use this and move workload based on the lowest forecast window with constraints defined by the user. After the job is moved the actual is logged in lieu of the forecast value and the amount of carbon intensity saving is calculated. 
 
 There is no Azure Sustainability API currently available so any big data jobs via Databricks or Synapse using job clusters will be tracked and the VM carbon consumption estimated so that the carbon saving on the job cluster can be calculated and logged.
+
+The intent of this solution is to be able to collect anonymous telemetry from all users to show an understand of the carbon savings that people can undertake by time shifting their data workloads where possible.
+
+[Architecture](docs/Carbon%20Intensity.png "Architecture")

@@ -9,6 +9,7 @@ Console.WriteLine("Building Carbon Application");
 var configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.json", false, true)
     .AddEnvironmentVariables()
+    .AddUserSecrets<Program>()
     .Build();
 
 var serviceProvider = new ServiceCollection()
