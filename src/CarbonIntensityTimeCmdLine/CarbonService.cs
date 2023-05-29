@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using CarbonIntensityTime;
+using CarbonIntensityTime.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace CarbonIntensityTimeCmdLine
 {
