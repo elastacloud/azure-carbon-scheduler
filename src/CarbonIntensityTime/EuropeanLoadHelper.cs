@@ -25,6 +25,7 @@
 using CarbonIntensityTypes;
 using CarbonIntensityTime.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace CarbonIntensityTime
 {
@@ -35,13 +36,16 @@ namespace CarbonIntensityTime
         private readonly ICollection<EntsoeCodes>? _entsoeCodes;
         private readonly IEntsoeHttpDriver _entsoeHttpDriver;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<EuropeanLoadHelper> _logger;
         public const string ENTSOE_Endpoint = "https://web-api.tp.entsoe.eu/api";
 
         public EuropeanLoadHelper(IEntsoeHttpDriver entsoeHttpDriver, ICodesLoader codesLoader,
-            IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory)
+            IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory, 
+            ILogger<EuropeanLoadHelper> logger)
         {
             _entsoeHttpDriver = entsoeHttpDriver;
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
 
             _token = appSettings.Value.ApiKey;
             _entsoeCodes = codesLoader.Entsoe();
@@ -103,6 +107,7 @@ namespace CarbonIntensityTime
 
         public async Task<List<CountryPsrCapacity>> GetInstalledCapacityByCountry(string inDomain)
         {
+            _logger.LogInformation($"Gets the installed capacity PSRs for UK on {DateTime.UtcNow:D}");
             var installedCapacity = new List<CountryPsrCapacity>();
             var entsoeRequest = new EntsoeRequest()
             {
@@ -122,14 +127,16 @@ namespace CarbonIntensityTime
                 select groupTimeSeries;
             foreach (var psr in results)
             {
-                installedCapacity.Add(new CountryPsrCapacity()
-                {
-                    Country = inDomain,
-                    Date = entsoeRequest.StartDate,
-                    Capacity = psr.Sum(),
-                    Psr = _fuelCodes.Where(code => code.Code == psr.Key).Select(code =>
-                        $"{code.Type} | " + (String.IsNullOrEmpty(code.Info) ? "N/A" : code.Info)).FirstOrDefault()
-                });
+               var capacity = new CountryPsrCapacity()
+               {
+                  Country = _entsoeCodes.First(code => code.EntsoeId == inDomain).Country,
+                  Date = entsoeRequest.StartDate,
+                  Capacity = psr.Sum(),
+                  Psr = _fuelCodes.Where(code => code.Code == psr.Key).Select(code =>
+                      $"{code.Type} | " + (String.IsNullOrEmpty(code.Info) ? "N/A" : code.Info)).FirstOrDefault()
+               };
+               installedCapacity.Add(capacity);
+               _logger.LogInformation($"{capacity.Country} with {capacity.Capacity}MW for PSR: {capacity.Psr}");
             }
 
             return installedCapacity;
