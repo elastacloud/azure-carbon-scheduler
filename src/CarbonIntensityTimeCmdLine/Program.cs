@@ -39,9 +39,8 @@ var serviceProvider = new ServiceCollection()
 var euro = serviceProvider.GetService<IEuropeanLoadHelper>();
 var ukCode = euro.GetEntsoeId("CTA|National Grid");
 
-Console.WriteLine($"Gets the installed capacity PSRs for UK on {DateTime.UtcNow:D}");
+
 
 var installedCapacity = await euro.GetInstalledCapacityByCountry(ukCode);
-installedCapacity.ForEach(installed => Console.WriteLine($"{installed.Psr}: {installed.Capacity} MW"));
 Console.WriteLine("PRESS ANY KEY TO END ....");
 Console.Read();
