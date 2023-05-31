@@ -1,4 +1,4 @@
-﻿namespace CarbonIntensityTime.Configuration;
+﻿namespace CarbonIntensityTime.Core.Configuration;
 
 public class CodesSettings
 {

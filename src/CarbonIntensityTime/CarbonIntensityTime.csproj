@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarbonIntensityTime.Core\CarbonIntensityTime.Core.csproj" />
     <ProjectReference Include="..\CarbonIntensityTypes\CarbonIntensityTypes.csproj" />
   </ItemGroup>
 
