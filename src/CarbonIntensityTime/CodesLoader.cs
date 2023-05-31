@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using CarbonIntensityTime.Configuration;
+using CarbonIntensityTime.Core.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

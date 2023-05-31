@@ -23,7 +23,7 @@
 */
 
 using CarbonIntensityTypes;
-using CarbonIntensityTime.Configuration;
+using CarbonIntensityTime.Core.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 
