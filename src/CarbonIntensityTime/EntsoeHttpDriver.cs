@@ -1,67 +1,101 @@
-﻿using CarbonIntensityTypes;
+﻿using System.Web;
+using CarbonIntensityTypes;
 using System.Xml.Serialization;
+using CarbonIntensityTime.Core;
 using Microsoft.Extensions.Logging;
 
-namespace CarbonIntensityTime
+namespace CarbonIntensityTime;
+
+/// <summary>
+/// The Http driver that makes the requests to entsoe
+/// </summary>
+public class EntsoeHttpDriver : IEntsoeHttpDriver
 {
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<EntsoeHttpDriver> _logger;
+
     /// <summary>
-    /// The Http driver that makes the requests to entsoe
+    /// The Entsoe endpoint
     /// </summary>
-    public class EntsoeHttpDriver : IEntsoeHttpDriver
+    private const string EntsoeEndpoint = "https://web-api.tp.entsoe.eu/api";
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="EntsoeHttpDriver"/> type
+    /// </summary>
+    /// <param name="httpClientFactory">An HTTP client factory instance for creating HTTP clients from</param>
+    /// <param name="logger">Logger instance</param>
+    public EntsoeHttpDriver(IHttpClientFactory httpClientFactory, ILogger<EntsoeHttpDriver> logger)
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ILogger<EntsoeHttpDriver> _logger;
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
+    }
 
-        /// <summary>
-        /// The Entsoe endpoint
-        /// </summary>
-        public const string ENTSOE_Endpoint = "https://web-api.tp.entsoe.eu/api";
+    /// <summary>
+    /// Given a request of documentType, process, psr and a security token should return a response with the requisite generation details for european countries
+    /// </summary>
+    public async Task<GL_MarketDocument?> EntsoeGetRequestWithPsr(EntsoeRequest request)
+    {
+        using var client = _httpClientFactory.CreateClient();
+        client.BaseAddress = new Uri(EntsoeEndpoint);
 
-        public EntsoeHttpDriver(IHttpClientFactory httpClientFactory, ILogger<EntsoeHttpDriver> logger)
+        var requestParameters = HttpUtility.ParseQueryString("");
+        requestParameters.Add("securityToken", request.SecurityToken);
+        requestParameters.Add("processType", request.ProcessType);
+        requestParameters.Add("documentType", request.DocumentType);
+        requestParameters.Add("periodStart", request.StartDate.ToString("yyyyMMddHH00"));
+        requestParameters.Add("periodEnd", request.EndDate.ToString("yyyyMMddHH00"));
+        requestParameters.Add("in_Domain", request.InDomain);
+                
+        if (!string.IsNullOrEmpty(request.Psr))
         {
-            _httpClientFactory = httpClientFactory;
-            _logger = logger;
+            requestParameters.Add("psrType", request.Psr);
         }
 
-        /// <summary>
-        /// Given a request of documenttype, process, psr and a security token should return a response with the requisite generation details for european countries
-        /// </summary>
-        public async Task<GL_MarketDocument> EntsoeGetRequestWithPsr(EntsoeRequest request)
-        {
-            GL_MarketDocument glMarketDocument;
-            Acknowledgement_MarketDocument acknowledgement;
-            string? responseData = null;
-            using (HttpClient client = _httpClientFactory.CreateClient())
-            {
-                client.BaseAddress = new Uri(ENTSOE_Endpoint);
-                // Construct the query string parameters
-                var queryString =
-                    $"?securityToken={request.SecurityToken}&processType={request.ProcessType}&documentType={request.DocumentType}&periodStart={request.StartDate.ToString("yyyyMMddHH00")}&periodEnd={request.EndDate.ToString("yyyyMMddHH00")}&in_Domain={request.InDomain}";
-                if (!String.IsNullOrEmpty(request.Psr))
-                {
-                    queryString += $"&psrType={request.Psr}";
-                }
+        var queryString = $"?{requestParameters}";
                 
-                _logger.LogDebug("Requesting Entsoe with query string: {QueryString}", queryString);
+        _logger.LogDebug("Requesting Entsoe with query string: {QueryString}", queryString);
+        var response = await client.GetAsync(queryString);
+        var responseData = await response.Content.ReadAsStringAsync();
 
-                HttpResponseMessage response = await client.GetAsync(queryString);
-                responseData = await response.Content.ReadAsStringAsync();
-            }
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorResponseText = GetErrorResponse(responseData);
+                    
+            _logger.LogError(
+                "Non-successful status code '{StatusCode}' returned from Entsoe API for request '{Request}' with message\n{Message}",
+                response.StatusCode,
+                response.RequestMessage?.RequestUri,
+                errorResponseText);
+                    
+            throw new EntsoeException($"Entsoe API request returned a non-successful status code '{response.StatusCode}'");
+        }
+            
+        var mySerializer = new XmlSerializer(typeof(GL_MarketDocument));
+        return mySerializer.Deserialize(new StringReader(responseData)) as GL_MarketDocument;
+    }
 
-            try
+    /// <summary>
+    /// Converts the error response into an Acknowledgement document to retrieve the error context from. If this fails
+    /// then the full response content is returned
+    /// </summary>
+    /// <param name="responseContent">The response content to deserialize</param>
+    /// <returns>The response from the deserialized content, or the full response content</returns>
+    private static string GetErrorResponse(string responseContent)
+    {
+        var mySerializer = new XmlSerializer(typeof(Acknowledgement_MarketDocument));
+
+        try
+        {
+            if (mySerializer.Deserialize(new StringReader(responseContent)) is Acknowledgement_MarketDocument acknowledgement)
             {
-                var mySerializer = new XmlSerializer(typeof(GL_MarketDocument));
-                glMarketDocument = (GL_MarketDocument) mySerializer.Deserialize(new StringReader(responseData));
-            }
-            catch (Exception)
-            {
-                var mySerializer = new XmlSerializer(typeof(Acknowledgement_MarketDocument));
-                acknowledgement =
-                    (Acknowledgement_MarketDocument) mySerializer.Deserialize(new StringReader(responseData));
-                throw new ApplicationException(acknowledgement.Reason[0].text);
+                return acknowledgement.Reason[0].text;
             }
 
-            return glMarketDocument;
+            return responseContent;
+        }
+        catch
+        {
+            return responseContent;
         }
     }
 }
