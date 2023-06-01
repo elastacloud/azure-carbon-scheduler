@@ -42,7 +42,7 @@ var serviceProvider = new ServiceCollection()
 var euro = serviceProvider.GetService<IEuropeanLoadHelper>();
 var ukCode = euro!.GetEntsoeId("CTA|National Grid");
 
-var installedCapacity = await euro.GetInstalledCapacityByCountry(ukCode);
+if (ukCode != null) await euro.GetInstalledCapacityByCountry(ukCode);
 
 var adfClient = serviceProvider.GetService<IFactoryClient>();
 var pipelines = await adfClient!.ListPipelines();
