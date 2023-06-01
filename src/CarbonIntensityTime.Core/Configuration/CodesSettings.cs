@@ -2,7 +2,7 @@
 
 public class CodesSettings
 {
-    public string Entsoe { get; set; }
+    public string Entsoe { get; set; } = string.Empty;
     
-    public string Fuels { get; set; }
+    public string Fuels { get; set; } = string.Empty;
 }

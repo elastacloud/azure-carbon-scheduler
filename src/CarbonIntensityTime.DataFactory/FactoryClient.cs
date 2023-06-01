@@ -16,7 +16,7 @@ public class FactoryClient : IFactoryClient
     private readonly FactorySettings _factorySettings;
     private readonly ILogger<FactoryClient> _logger;
 
-    private DataFactoryManagementClient? _client = null;
+    private DataFactoryManagementClient? _client;
     
     /// <summary>
     /// Creates a new instance of the <see cref="FactoryClient"/> class

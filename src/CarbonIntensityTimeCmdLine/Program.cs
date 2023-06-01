@@ -40,12 +40,12 @@ var serviceProvider = new ServiceCollection()
     .BuildServiceProvider();
 
 var euro = serviceProvider.GetService<IEuropeanLoadHelper>();
-var ukCode = euro.GetEntsoeId("CTA|National Grid");
+var ukCode = euro!.GetEntsoeId("CTA|National Grid");
 
-var installedCapacity = await euro.GetInstalledCapacityByCountry(ukCode);
+if (ukCode != null) await euro.GetInstalledCapacityByCountry(ukCode);
 
 var adfClient = serviceProvider.GetService<IFactoryClient>();
-var pipelines = await adfClient.ListPipelines();
+var pipelines = await adfClient!.ListPipelines();
 foreach (var pipeline in pipelines)
 {
     Console.WriteLine(pipeline);
