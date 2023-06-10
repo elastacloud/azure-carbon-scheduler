@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarbonIntensityTime.DataFactory\CarbonIntensityTime.DataFactory.csproj" />
+    <ProjectReference Include="..\CarbonIntensityTime.Azure\CarbonIntensityTime.Azure.csproj" />
     <ProjectReference Include="..\CarbonIntensityTime\CarbonIntensityTime.csproj" />
     <ProjectReference Include="..\CarbonIntensityTypes\CarbonIntensityTypes.csproj" />
   </ItemGroup>
