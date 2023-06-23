@@ -51,5 +51,11 @@ foreach (var pipeline in pipelines)
     Console.WriteLine(pipeline);
 }
 
+var pipelineRuns = await adfClient!.ListPipelineRuns(60);
+foreach (var run in pipelineRuns)
+{
+    Console.WriteLine(run.RunId);
+}
+
 Console.WriteLine("PRESS ANY KEY TO END ....");
 Console.Read();
