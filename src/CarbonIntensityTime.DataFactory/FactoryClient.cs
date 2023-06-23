@@ -1,10 +1,13 @@
 ﻿using Azure.Core;
 using Azure.Identity;
 using CarbonIntensityTime.Core.Configuration;
+using CarbonIntensityTime.DataFactory.Models;
 using Microsoft.Azure.Management.DataFactory;
+using Microsoft.Azure.Management.DataFactory.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Rest;
+using PipelineRun = CarbonIntensityTime.DataFactory.Models.PipelineRun;
 
 namespace CarbonIntensityTime.DataFactory;
 
@@ -17,7 +20,7 @@ public class FactoryClient : IFactoryClient
     private readonly ILogger<FactoryClient> _logger;
 
     private DataFactoryManagementClient? _client;
-    
+
     /// <summary>
     /// Creates a new instance of the <see cref="FactoryClient"/> class
     /// </summary>
@@ -37,9 +40,39 @@ public class FactoryClient : IFactoryClient
         var client = await GetClient();
 
         _logger.LogDebug("Retrieving pipelines");
-        var pipelines = await client.Pipelines.ListByFactoryAsync(_factorySettings.ResourceGroup, _factorySettings.Name);
+        var pipelines =
+            await client.Pipelines.ListByFactoryAsync(_factorySettings.ResourceGroup, _factorySettings.Name);
 
         return pipelines.Select(p => p.Name).ToList();
+    }
+
+    /// <summary>
+    /// Retrieves a collection of pipeline runs in the last x minutes
+    /// </summary>
+    /// <returns>A collection of pipeline runs</returns>
+    public async Task<ICollection<PipelineRun>> ListPipelineRuns(int minutes)
+    {
+        var end = DateTime.UtcNow;
+        var start = end.AddMinutes(minutes * -1);
+        var filter = new RunFilterParameters(start, end);
+        
+        var client = await GetClient();
+
+        _logger.LogDebug("Retrieving pipelines runs");
+        var x = (await client.PipelineRuns.QueryByFactoryAsync(_factorySettings.ResourceGroup, _factorySettings.Name,
+            filter)).Value;
+
+        return x.Select(pr => new PipelineRun
+        {
+            RunId = pr.RunId,
+            PipelineName = pr.PipelineName,
+            Status = pr.Status,
+            Start = pr.RunStart,
+            End = pr.RunEnd,
+            Duration = pr.DurationInMs,
+            InvokedByName = pr.InvokedBy.Name,
+            InvokedByType = pr.InvokedBy.InvokedByType
+        }).ToList();
     }
 
     /// <summary>
@@ -53,7 +86,7 @@ public class FactoryClient : IFactoryClient
             _logger.LogDebug("Using existing client");
             return _client;
         }
-        
+
         TokenCredential credential;
         if (!string.IsNullOrEmpty(_factorySettings.ClientId) && !string.IsNullOrEmpty(_factorySettings.ClientSecret))
         {
@@ -68,7 +101,7 @@ public class FactoryClient : IFactoryClient
         }
 
         _logger.LogDebug("Requesting management access token");
-        var requestContext = new TokenRequestContext(new[] {"https://management.azure.com/.default"});
+        var requestContext = new TokenRequestContext(new[] { "https://management.azure.com/.default" });
         var cancellationToken = new CancellationToken();
         var token = await credential.GetTokenAsync(requestContext, cancellationToken);
 
