@@ -55,14 +55,14 @@ public class FactoryClient : IFactoryClient
         var end = DateTime.UtcNow;
         var start = end.AddMinutes(minutes * -1);
         var filter = new RunFilterParameters(start, end);
-        
+
         var client = await GetClient();
 
         _logger.LogDebug("Retrieving pipelines runs");
         var x = (await client.PipelineRuns.QueryByFactoryAsync(_factorySettings.ResourceGroup, _factorySettings.Name,
             filter)).Value;
 
-        return x.Select(pr => new PipelineRun
+        var pipelineRuns = x.Select(async pr => new PipelineRun
         {
             RunId = pr.RunId,
             PipelineName = pr.PipelineName,
@@ -71,8 +71,37 @@ public class FactoryClient : IFactoryClient
             End = pr.RunEnd,
             Duration = pr.DurationInMs,
             InvokedByName = pr.InvokedBy.Name,
-            InvokedByType = pr.InvokedBy.InvokedByType
+            InvokedByType = pr.InvokedBy.InvokedByType,
+            Activities =
+                (await ListPipelineRunActivities(pr.RunId, filter))
+                .Select(ar => new PipelineActivity
+                {
+                    ActivityId = ar.ActivityRunId,
+                    Name = ar.ActivityName,
+                    Type = ar.ActivityType,
+                    Status = ar.Status,
+                    Start = ar.ActivityRunStart,
+                    End = ar.ActivityRunEnd,
+                    Duration = ar.DurationInMs,
+                    Input = ar.Input,
+                    PipelineName = ar.PipelineName,
+                    PipelineRunId = ar.PipelineRunId
+                }).ToList()
         }).ToList();
+        
+        return await Task.WhenAll(pipelineRuns);
+    }
+    
+    /// <summary>
+    /// Retrieves a collection of activities within a specific pipeline run
+    /// </summary>
+    /// <returns>A collection of activities</returns>
+    public async Task<IList<ActivityRun>> ListPipelineRunActivities(string runId, RunFilterParameters filter)
+    {
+        var client = await GetClient();
+        var activityRuns = await client.ActivityRuns.QueryByPipelineRunAsync(_factorySettings.ResourceGroup, _factorySettings.Name,
+            runId, filter);
+        return activityRuns.Value;
     }
 
     /// <summary>

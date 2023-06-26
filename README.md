@@ -15,6 +15,7 @@ The intent of this solution is to be able to collect anonymous telemetry from al
 ![Architecture](docs/Carbon%20Intensity.png "Architecture")
 
 `appsettings.json`
+
 ```json
 {
   "AppSettings": {
@@ -33,5 +34,6 @@ The intent of this solution is to be able to collect anonymous telemetry from al
     "ClientSecret": null
   }
 }
-
 ```
+
+Note: If no ClientId and ClientSecret is specified, then AzureDefaultCredential will be used.
