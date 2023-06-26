@@ -396,5 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/CarbonIntensityTimeCmdLine/appsettings.json
-/src/CarbonIntensityTimeCmdLine/appsettings.json
+src/CarbonIntensityTimeCmdLine/appsettings.json
