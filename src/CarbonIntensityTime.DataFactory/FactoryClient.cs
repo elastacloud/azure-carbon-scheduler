@@ -59,10 +59,10 @@ public class FactoryClient : IFactoryClient
         var client = await GetClient();
 
         _logger.LogDebug("Retrieving pipelines runs");
-        var x = (await client.PipelineRuns.QueryByFactoryAsync(_factorySettings.ResourceGroup, _factorySettings.Name,
+        var getPipelineRuns = (await client.PipelineRuns.QueryByFactoryAsync(_factorySettings.ResourceGroup, _factorySettings.Name,
             filter)).Value;
 
-        var pipelineRuns = x.Select(async pr => new PipelineRun
+        var pipelineRuns = getPipelineRuns.Select(async pr => new PipelineRun
         {
             RunId = pr.RunId,
             PipelineName = pr.PipelineName,
