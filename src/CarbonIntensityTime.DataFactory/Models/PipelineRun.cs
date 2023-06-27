@@ -1,6 +1,4 @@
-﻿using Microsoft.Azure.Management.DataFactory.Models;
-
-namespace CarbonIntensityTime.DataFactory.Models;
+﻿namespace CarbonIntensityTime.DataFactory.Models;
 
 public class PipelineRun
 {

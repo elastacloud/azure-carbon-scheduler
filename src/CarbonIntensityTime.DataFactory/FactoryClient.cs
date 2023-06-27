@@ -7,9 +7,6 @@ using Microsoft.Azure.Management.DataFactory.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Rest;
-using Microsoft.VisualBasic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using PipelineRun = CarbonIntensityTime.DataFactory.Models.PipelineRun;
 
 namespace CarbonIntensityTime.DataFactory;
