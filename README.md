@@ -36,4 +36,4 @@ The intent of this solution is to be able to collect anonymous telemetry from al
 }
 ```
 
-Note: If no ClientId and ClientSecret is specified, then AzureDefaultCredential will be used.
+Note: If no ClientId or Secret is specified then the application will attempt to use the AzureDefaultCredential type which will check for Azure CLI, Visual Studio Code, etc... type of credentials first. If you are logged into a tenant other than the one in which the Azure Data Factory instance exists then you may get an error when running the code.
