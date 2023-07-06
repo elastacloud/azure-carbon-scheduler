@@ -1,4 +1,5 @@
-﻿using CarbonIntensityTime.DataFactory.Models;
+﻿using Microsoft.Azure.Management.DataFactory.Models;
+using PipelineRun = CarbonIntensityTime.DataFactory.Models.PipelineRun;
 
 namespace CarbonIntensityTime.DataFactory;
 
@@ -17,4 +18,10 @@ public interface IFactoryClient
     /// </summary>
     /// <returns>A collection of pipeline runs</returns>
     Task<ICollection<PipelineRun>> ListPipelineRuns(int minutes);
+
+    /// <summary>
+    /// Retrieves a collection of activities within a specific pipeline run
+    /// </summary>
+    /// <returns>A collection of activities</returns>
+    Task<IList<ActivityRun>> ListPipelineRunActivities(string runId, RunFilterParameters filter);
 }

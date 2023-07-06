@@ -10,4 +10,5 @@ public class PipelineRun
     public int? Duration { get; init; }
     public string InvokedByName { get; init; } = string.Empty;
     public string InvokedByType { get; init; } = string.Empty;
+    public List<PipelineActivity> Activities { get; init; } = new();
 }
