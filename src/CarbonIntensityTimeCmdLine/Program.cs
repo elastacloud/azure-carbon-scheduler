@@ -40,8 +40,6 @@ var serviceProvider = new ServiceCollection()
     .BuildServiceProvider();
 
 var euro = serviceProvider.GetService<IEuropeanLoadHelper>();
-
-
 var ukCode = euro!.GetEntsoeId("CTA|National Grid");
 
 var forecast = await euro.GetForecast(DataCenterConstants.WestEurope);
