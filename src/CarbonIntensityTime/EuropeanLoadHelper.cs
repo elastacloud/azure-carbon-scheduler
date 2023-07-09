@@ -22,164 +22,168 @@
     A16 = Realised
 */
 
+using System.Web;
 using CarbonIntensityTypes;
 using CarbonIntensityTime.Core.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 
-namespace CarbonIntensityTime
+namespace CarbonIntensityTime;
+
+public class EuropeanLoadHelper : IEuropeanLoadHelper
 {
-   public class EuropeanLoadHelper : IEuropeanLoadHelper
+   private readonly string _token;
+   private readonly ICollection<FuelCodes>? _fuelCodes;
+   private readonly ICollection<EntsoeCodes>? _entsoeCodes;
+   private readonly IEntsoeHttpDriver _entsoeHttpDriver;
+   private readonly IHttpClientFactory _httpClientFactory;
+   private readonly ILogger<EuropeanLoadHelper> _logger;
+   public const string ENTSOE_Endpoint = "https://web-api.tp.entsoe.eu/api";
+
+   public EuropeanLoadHelper(IEntsoeHttpDriver entsoeHttpDriver, ICodesLoader codesLoader,
+       IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory,
+       ILogger<EuropeanLoadHelper> logger)
    {
-      private readonly string _token;
-      private readonly ICollection<FuelCodes>? _fuelCodes;
-      private readonly ICollection<EntsoeCodes>? _entsoeCodes;
-      private readonly IEntsoeHttpDriver _entsoeHttpDriver;
-      private readonly IHttpClientFactory _httpClientFactory;
-      private readonly ILogger<EuropeanLoadHelper> _logger;
-      public const string ENTSOE_Endpoint = "https://web-api.tp.entsoe.eu/api";
+      _entsoeHttpDriver = entsoeHttpDriver;
+      _httpClientFactory = httpClientFactory;
+      _logger = logger;
 
-      public EuropeanLoadHelper(IEntsoeHttpDriver entsoeHttpDriver, ICodesLoader codesLoader,
-          IOptions<AppSettings> appSettings, IHttpClientFactory httpClientFactory,
-          ILogger<EuropeanLoadHelper> logger)
+      _token = appSettings.Value.ApiKey;
+      _entsoeCodes = codesLoader.Entsoe();
+      _fuelCodes = codesLoader.Fuel();
+   }
+
+   public string? GetEntsoeId(string countryCode)
+   {
+      return _entsoeCodes.SingleOrDefault(c =>
+          string.Equals(c.Code, countryCode, StringComparison.OrdinalIgnoreCase))?.EntsoeId;
+   }
+
+   /// <summary>
+   /// Gets the previous 24 hours of values 
+   /// </summary>
+   public async Task<string> GetCurrentValue(string psr, string inDomain)
+   {
+      string? responseData = null;
+      using (HttpClient client = _httpClientFactory.CreateClient())
       {
-         _entsoeHttpDriver = entsoeHttpDriver;
-         _httpClientFactory = httpClientFactory;
-         _logger = logger;
-
-         _token = appSettings.Value.ApiKey;
-         _entsoeCodes = codesLoader.Entsoe();
-         _fuelCodes = codesLoader.Fuel();
+         client.BaseAddress = new Uri(ENTSOE_Endpoint);
+         // Construct the query string parameters
+         string periodStart = DateTime.UtcNow.AddDays(-1).ToString("yyyyMMddHH00");
+         string periodEnd = DateTime.UtcNow.ToString("yyyyMMddHH00");
+         var queryString =
+             $"?securityToken={_token}&processType=A16&psrType={psr}&documentType=A73&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
+         HttpResponseMessage response = await client.GetAsync(queryString);
+         responseData = await response.Content.ReadAsStringAsync();
       }
 
-      public string? GetEntsoeId(string countryCode)
-      {
-         return _entsoeCodes.SingleOrDefault(c =>
-             string.Equals(c.Code, countryCode, StringComparison.OrdinalIgnoreCase))?.EntsoeId;
-      }
+      return responseData;
+   }
 
-      /// <summary>
-      /// Gets the previous 24 hours of values 
-      /// </summary>
-      public async Task<string> GetCurrentValue(string psr, string inDomain)
+   /// <summary>
+   /// Gets the leading forecast of values for the next 24 hours
+   /// For both the entire 
+   /// </summary>
+   public async Task<List<AggregatePeriodValue>> GetForecast(string inDomain)
+   {
+      var generationWithRenew = new List<AggregatePeriodValue>();
+      var entsoeRequest = new EntsoeRequest();
+      var installedCapacity = GetAggregateForecastValue(inDomain, ref entsoeRequest);
+
+      var startDate = DateTime.UtcNow;
+      // Gets the entsoe request for solar and wind only
+      entsoeRequest.DocumentType = "A69";
+      var response = await _entsoeHttpDriver.EntsoeGetRequestWithPsr(entsoeRequest);
+      var period = response.TimeSeries.FirstOrDefault().Period[0];
+      double numberOfMinutesInterval = (24D / Convert.ToDouble(period.Point.Length)) * 60D;
+      for (int i = 0; i < period.Point.Length; i++)
       {
-         string? responseData = null;
-         using (HttpClient client = _httpClientFactory.CreateClient())
+         var existingPoint = installedCapacity.SingleOrDefault(point => point.StartDate == startDate.AddMinutes(numberOfMinutesInterval * i));
+         existingPoint.RenewableValue = int.Parse(period.Point[i].quantity);
+         generationWithRenew.Add(existingPoint);
+         _logger.LogInformation($"At time: {existingPoint.StartDate.ToString("f")}, total generation={existingPoint.TotalValue}, renewable generation={existingPoint.RenewableValue}");
+      }
+      return generationWithRenew;
+   }
+
+   private List<AggregatePeriodValue> GetAggregateForecastValue(string inDomain, ref EntsoeRequest entsoeRequest)
+   {
+      // get the aggregate value first 
+      _logger.LogInformation($"Gets the aggregate value for UK on {DateTime.UtcNow:D}");
+      var initialDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, 0, 0);
+
+      var installedCapacity = new List<AggregatePeriodValue>();
+      entsoeRequest = new EntsoeRequest()
+      {
+         DocumentType = "A71",
+         ProcessType = "A01",
+         InDomain = inDomain,
+         SecurityToken = _token,
+         StartDate = initialDate.AddHours(-2),
+         EndDate = initialDate.AddHours(-2).AddDays(1)
+      };
+      // Gets the entsoe request for the total energy generation
+      var response = _entsoeHttpDriver.EntsoeGetRequestWithPsr(entsoeRequest).Result;
+      var period = response.TimeSeries.FirstOrDefault().Period[0];
+      double numberOfMinutesInterval = (24D / Convert.ToDouble(period.Point.Length)) * 60D;
+      DateTimeOffset startDate = DateTimeOffset.ParseExact(response.time_PeriodtimeInterval[0].start,
+         "yyyy-MM-ddTHH:00Z", CultureInfo.InvariantCulture);
+      for (int i = 0; i < period.Point.Length; i++)
+      {
+         var aggValue = new AggregatePeriodValue()
          {
-            client.BaseAddress = new Uri(ENTSOE_Endpoint);
-            // Construct the query string parameters
-            string periodStart = DateTime.UtcNow.AddDays(-1).ToString("yyyyMMddHH00");
-            string periodEnd = DateTime.UtcNow.ToString("yyyyMMddHH00");
-            var queryString =
-                $"?securityToken={_token}&processType=A16&psrType={psr}&documentType=A73&periodStart={periodStart}&periodEnd={periodEnd}&in_Domain={inDomain}";
-            HttpResponseMessage response = await client.GetAsync(queryString);
-            responseData = await response.Content.ReadAsStringAsync();
-         }
-
-         return responseData;
-      }
-
-      /// <summary>
-      /// Gets the leading forecast of values for the next 24 hours
-      /// For both the entire 
-      /// </summary>
-      public async Task<List<AggregatePeriodValue>> GetForecastValue(string inDomain)
-      {
-         var generationWithRenew = new List<AggregatePeriodValue>();
-         var entsoeRequest = new EntsoeRequest();
-         var installedCapacity = await GetAggregateForecastValue(inDomain, ref entsoeRequest);
-         
-         // Gets the entsoe request for solar and wind only
-         entsoeRequest.DocumentType = "A69";
-         var response = await _entsoeHttpDriver.EntsoeGetRequestWithPsr(entsoeRequest);
-         var period = response.TimeSeries.FirstOrDefault().Period[0];
-         double numberOfMinutesInterval = (24D / Convert.ToDouble(period.Point.Length)) * 60D;
-         for (int i = 0; i < period.Point.Length; i++)
-         {
-            var existingPoint = installedCapacity.SingleOrDefault(point => point.StartDate == startDate.AddMinutes(numberOfMinutesInterval * i).UtcDateTime);
-            existingPoint.RenewableValue = int.Parse(period.Point[i].quantity);
-            generationWithRenew.Add(existingPoint);
-            _logger.LogInformation($"At time: {existingPoint.StartDate.ToString("f")}, total generation={existingPoint.TotalValue}, renewable generation={existingPoint.RenewableValue}");
-         }
-         return generationWithRenew;
-      }
-
-      private async Task<List<AggregatePeriodValue>> GetAggregateForecastValue(string inDomain, ref EntsoeRequest entsoeRequest)
-      {
-         // get the aggregate value first 
-         _logger.LogInformation($"Gets the aggregate value for UK on {DateTime.UtcNow:D}");
-         var initialDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, DateTime.UtcNow.Hour, 0, 0);
-
-         var installedCapacity = new List<AggregatePeriodValue>();
-         entsoeRequest = new EntsoeRequest()
-         {
-            DocumentType = "A71",
-            ProcessType = "A01",
-            InDomain = inDomain,
-            SecurityToken = _token,
-            StartDate = initialDate.AddHours(-2),
-            EndDate = initialDate.AddHours(-2).AddDays(1)
+            StartDate = startDate.AddMinutes(numberOfMinutesInterval * i).UtcDateTime,
+            TotalValue = int.Parse(period.Point[i].quantity)
          };
-         // Gets the entsoe request for the total energy generation
-         var response = await _entsoeHttpDriver.EntsoeGetRequestWithPsr(entsoeRequest);
-         var period = response.TimeSeries.FirstOrDefault().Period[0];
-         double numberOfMinutesInterval = (24D / Convert.ToDouble(period.Point.Length)) * 60D;
-         DateTimeOffset startDate = DateTimeOffset.ParseExact(response.time_PeriodtimeInterval[0].start,
-            "yyyy-MM-ddTHH:00Z", CultureInfo.InvariantCulture);
-         for (int i = 0; i < period.Point.Length; i++)
-         {
-            var aggValue = new AggregatePeriodValue()
-            {
-               StartDate = startDate.AddMinutes(numberOfMinutesInterval * i).UtcDateTime,
-               TotalValue = int.Parse(period.Point[i].quantity)
-            };
-            installedCapacity.Add(aggValue);
-         }
+         installedCapacity.Add(aggValue);
       }
+      return installedCapacity;
+   }
 
-      public Task<List<EntsoeCodes>> GetEnsoeFromJsonFile(string fileName)
+
+   public Task<List<EntsoeCodes>> GetEnsoeFromJsonFile(string fileName)
+   {
+      throw new NotImplementedException();
+   }
+   /// <summary>
+   /// Gets the installed capacity of the country across the particular network
+   /// </summary>
+   public async Task<List<CountryPsrCapacity>> GetInstalledCapacityByCountry(string inDomain)
+   {
+      _logger.LogInformation($"Gets the installed capacity PSRs for UK on {DateTime.UtcNow:D}");
+      var installedCapacity = new List<CountryPsrCapacity>();
+      var entsoeRequest = new EntsoeRequest()
       {
-         throw new NotImplementedException();
-      }
-      /// <summary>
-      /// Gets the installed capacity of the country across the particular network
-      /// </summary>
-      public async Task<List<CountryPsrCapacity>> GetInstalledCapacityByCountry(string inDomain)
+
+         DocumentType = "A71",
+         ProcessType = "A33",
+         InDomain = inDomain,
+         SecurityToken = _token,
+         StartDate = DateTime.UtcNow.AddHours(-4),
+         EndDate = DateTime.UtcNow.AddHours(-3)
+      };
+
+      var response = await _entsoeHttpDriver.EntsoeGetRequestWithPsr(entsoeRequest);
+      // Build linq expression to sum all of the installed capacities over the network for the type of generation
+      var results = from ts in response.TimeSeries
+                    group Convert.ToInt32(ts.Period[0].Point[0].quantity) by ts.MktPSRType[0].psrType
+                    into groupTimeSeries
+                    select groupTimeSeries;
+      foreach (var psr in results)
       {
-         _logger.LogInformation($"Gets the installed capacity PSRs for UK on {DateTime.UtcNow:D}");
-         var installedCapacity = new List<CountryPsrCapacity>();
-         var entsoeRequest = new EntsoeRequest()
+         var capacity = new CountryPsrCapacity()
          {
-            DocumentType = "A71",
-            ProcessType = "A33",
-            InDomain = inDomain,
-            SecurityToken = _token,
-            StartDate = DateTime.UtcNow.AddHours(-4),
-            EndDate = DateTime.UtcNow.AddHours(-3)
+            Country = _entsoeCodes.First(code => code.EntsoeId == inDomain).Country,
+            Date = entsoeRequest.StartDate,
+            Capacity = psr.Sum(),
+            Psr = _fuelCodes.Where(code => code.Code == psr.Key).Select(code =>
+                $"{code.Type} | " + (String.IsNullOrEmpty(code.Info) ? "N/A" : code.Info)).FirstOrDefault()
          };
-
-         var response = await _entsoeHttpDriver.EntsoeGetRequestWithPsr(entsoeRequest);
-         // Build linq expression to sum all of the installed capacities over the network for the type of generation
-         var results = from ts in response.TimeSeries
-                       group Convert.ToInt32(ts.Period[0].Point[0].quantity) by ts.MktPSRType[0].psrType
-                       into groupTimeSeries
-                       select groupTimeSeries;
-         foreach (var psr in results)
-         {
-            var capacity = new CountryPsrCapacity()
-            {
-               Country = _entsoeCodes.First(code => code.EntsoeId == inDomain).Country,
-               Date = entsoeRequest.StartDate,
-               Capacity = psr.Sum(),
-               Psr = _fuelCodes.Where(code => code.Code == psr.Key).Select(code =>
-                   $"{code.Type} | " + (String.IsNullOrEmpty(code.Info) ? "N/A" : code.Info)).FirstOrDefault()
-            };
-            installedCapacity.Add(capacity);
-            _logger.LogInformation($"{capacity.Country} with {capacity.Capacity}MW for PSR: {capacity.Psr}");
-         }
-
-         return installedCapacity;
+         installedCapacity.Add(capacity);
+         _logger.LogInformation($"{capacity.Country} with {capacity.Capacity}MW for PSR: {capacity.Psr}");
       }
+
+      return installedCapacity;
    }
 }

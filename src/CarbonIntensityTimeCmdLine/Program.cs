@@ -40,16 +40,24 @@ var serviceProvider = new ServiceCollection()
     .BuildServiceProvider();
 
 var euro = serviceProvider.GetService<IEuropeanLoadHelper>();
-var ukCode = euro.GetEntsoeId("CTA|National Grid");
-var forecast = await euro.GetForecastValue(DataCenterConstants.WestEurope);
 
-var installedCapacity = await euro.GetInstalledCapacityByCountry(DataCenterConstants.NorthEurope);
+
+var ukCode = euro!.GetEntsoeId("CTA|National Grid");
+
+var forecast = await euro.GetForecast(DataCenterConstants.WestEurope);
+if (ukCode != null) await euro.GetInstalledCapacityByCountry(DataCenterConstants.WestEurope);
 
 var adfClient = serviceProvider.GetService<IFactoryClient>();
-var pipelines = await adfClient.ListPipelines();
+var pipelines = await adfClient!.ListPipelines();
 foreach (var pipeline in pipelines)
 {
     Console.WriteLine(pipeline);
+}
+
+var pipelineRuns = await adfClient!.ListPipelineRuns(60);
+foreach (var run in pipelineRuns)
+{
+    Console.WriteLine(run.RunId);
 }
 
 Console.WriteLine("PRESS ANY KEY TO END ....");

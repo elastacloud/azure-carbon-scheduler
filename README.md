@@ -13,3 +13,27 @@ There is no Azure Sustainability API currently available so any big data jobs vi
 The intent of this solution is to be able to collect anonymous telemetry from all users to show an understand of the carbon savings that people can undertake by time shifting their data workloads where possible.
 
 ![Architecture](docs/Carbon%20Intensity.png "Architecture")
+
+`appsettings.json`
+
+```json
+{
+  "AppSettings": {
+    "ApiKey": ""
+  },
+  "Codes": {
+    "Entsoe": "entsoe.json",
+    "Fuels": "fuels.json"
+  },
+  "DataFactory": {
+    "Name": "<ADF instance name>",
+    "SubscriptionId": "<Subscription id for ADF instance>",
+    "ResourceGroup": "<Resource group name for ADF instance>",
+    "TenantId": "<Tenant id for ADF instance>",
+    "ClientId": null,
+    "ClientSecret": null
+  }
+}
+```
+
+Note: If no ClientId or Secret is specified then the application will attempt to use the AzureDefaultCredential type which will check for Azure CLI, Visual Studio Code, etc... type of credentials first. If you are logged into a tenant other than the one in which the Azure Data Factory instance exists then you may get an error when running the code.
