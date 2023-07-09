@@ -13,8 +13,10 @@ namespace CarbonIntensityTime
         /// Gets the previous 24 hour of values for the psr for a particular country
         /// </summary>
         public Task<string> GetCurrentValue(string psr, string inDomain);
-
-        public Task<string> GetForecastValue(string psr, string inDomain);
+        /// <summary>
+        /// Gets the forecast value for an indomain
+        /// </summary>
+        public Task<List<AggregatePeriodValue>> GetForecastValue(string inDomain);
         public Task<List<EntsoeCodes>> GetEnsoeFromJsonFile(string fileName);
 
         /// <summary>

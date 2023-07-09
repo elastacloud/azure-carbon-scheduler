@@ -34,9 +34,10 @@ namespace CarbonIntensityTime
             using (HttpClient client = _httpClientFactory.CreateClient())
             {
                 client.BaseAddress = new Uri(ENTSOE_Endpoint);
+                string domain = request.DocumentType == "A65" ? "outBiddingZone_Domain" : "in_Domain";
                 // Construct the query string parameters
                 var queryString =
-                    $"?securityToken={request.SecurityToken}&processType={request.ProcessType}&documentType={request.DocumentType}&periodStart={request.StartDate.ToString("yyyyMMddHH00")}&periodEnd={request.EndDate.ToString("yyyyMMddHH00")}&in_Domain={request.InDomain}";
+                    $"?securityToken={request.SecurityToken}&processType={request.ProcessType}&documentType={request.DocumentType}&periodStart={request.StartDate.ToString("yyyyMMddHH00")}&periodEnd={request.EndDate.ToString("yyyyMMddHH00")}&{domain}={request.InDomain}";
                 if (!String.IsNullOrEmpty(request.Psr))
                 {
                     queryString += $"&psrType={request.Psr}";
